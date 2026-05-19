@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地表最強 AI 知識庫與自動化工作流導航器</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            googleBlue: '#4285F4',
+                            googleRed: '#EA4335',
+                            googleYellow: '#FBBC05',
+                            googleGreen: '#34A853',
+                            claudeOrange: '#D97706',
+                            claudeBeige: '#FDFBF7',
+                            darkBg: '#0F172A',
+                            darkCard: '#1E293B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 自訂細節過渡與美化 */
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .light .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-glow:hover {
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.15);
+        }
+        /* 自訂滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans transition-colors duration-300 min-h-screen" id="appBody">
+
+    <!-- 頂部導航 -->
+    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- LOGO -->
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-indigo-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span class="text-xl font-bold tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">AI 知識庫導航器 2.0</span>
+                </div>
+
+                <!-- 導航選單 -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="#matchmaker" class="text-sm font-medium hover:text-indigo-400 transition-colors">場景配對</a>
+                    <a href="#promptBuilder" class="text-sm font-medium hover:text-indigo-400 transition-colors">提示詞公式</a>
+                    <a href="#knowledgeBase" class="text-sm font-medium hover:text-indigo-400 transition-colors">2026最新密技</a>
+                    <a href="#aiQuiz" class="text-sm font-medium hover:text-indigo-400 transition-colors">知識挑戰賽</a>
+                    <a href="#faq" class="text-sm font-medium hover:text-indigo-400 transition-colors">新手排雷 FAQ</a>
+                </div>
+
+                <!-- 亮暗色切換與快捷 -->
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors" title="切換亮/暗色模式">
+                        <!-- 太陽 (預設暗色顯示) -->
+                        <svg id="sunIcon" class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                        </svg>
+                        <!-- 月亮 (亮色時顯示) -->
+                        <svg id="moonIcon" class="w-5 h-5 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+                    <a href="#matchmaker" class="hidden sm:inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md transform hover:scale-105 transition-all">
+                        立刻配對適配
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 巨幕廣告區 (Hero Section) -->
+    <header class="relative overflow-hidden py-16 sm:py-24 bg-slate-900 border-b border-slate-800">
+        <!-- 背景炫光裝飾 -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full filter blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-6">
+                ✨ 跨越 Gemini + NotebookLM & Claude 自動化工作流
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
+                <span class="gradient-text">地表最強 AI 知識大腦</span><br>
+                <span class="text-slate-100" id="heroTitle">新手無腦起飛全指南</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-base sm:text-xl text-slate-400 leading-relaxed mb-8">
+                這是一份完全基於 <strong>孔老師 AI 研習社</strong> 最新內部實戰密技的自適應導航系統。我們把零散的聊天記錄、多模態輸出、Claude Skills 2.0、NotebookLM 自動降噪，濃縮成你點點手指就能掌控的「第二大腦」！
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="#matchmaker" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-lg font-medium transition-all shadow-lg hover:shadow-indigo-500/20 text-center">
+                    🎯 診斷我的 AI 任務
+                </a>
+                <a href="#knowledgeBase" class="w-full sm:w-auto px-8 py-4 bg-slate-800 hover:bg-slate-700 rounded-xl text-lg font-medium border border-slate-700 transition-all text-center">
+                    💡 探索隱藏密技
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 模組一：AI 任務適配診斷器 -->
+    <section id="matchmaker" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-white mb-2">🎯 零基礎 AI 任務適配診斷器</h2>
+            <p class="text-slate-400">不知道今天該用哪種 AI 工具？選擇您的工作痛點，一鍵配出最優「地表最強組合」與現成提示詞！</p>
+        </div>
+
+        <div class="bg-slate-800/50 rounded-2xl p-6 sm:p-10 border border-slate-700/80 shadow-2xl backdrop-blur-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <!-- 選擇器 -->
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-indigo-400 mb-2">1. 選擇你目前面臨的工作情境</label>
+                        <select id="userScenario" onchange="runDiagnosis()" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="scen1">📂 會議記錄、影音教材或大量文檔堆積如山，急需降噪整理</option>
+                            <option value="scen2">💼 重複性的電腦檔案整理、Notion 表格自動更新、不想動手複製貼上</option>
+                            <option value="scen3">🌐 想快速建立超高質感的 landing page、個人品牌網網頁，但零程式基礎</option>
+                            <option value="scen4">🎬 想無腦製作爆款 3D/科幻動漫短影片，或 YouTube 專業縮圖</option>
+                            <option value="scen5">📈 想要一個 24小時不休眠、雲端為我自動監控美股與競業流量的 Telegram 助理</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <h4 class="font-bold text-sm text-slate-300 mb-3 flex items-center gap-2">
+                            <span class="flex h-2.5 w-2.5 rounded-full bg-indigo-500"></span>
+                            新手入門心法指引
+                        </h4>
+                        <p class="text-xs text-slate-400 leading-relaxed" id="stepGuide">
+                            NotebookLM 就像你的「文件倉庫」，負責絕對準確、不產生幻覺地解答本機資料；而 Gemini 則是「創意大腦」，負責廣泛發揮與美學 Landing Page 生成。兩者合體才是完整的第二大腦！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 診斷結果區 -->
+                <div class="bg-indigo-950/20 border border-indigo-500/20 rounded-xl p-6 space-y-5 relative">
+                    <div class="absolute -top-3 -right-3 px-3 py-1 bg-indigo-500 text-xs font-semibold rounded-lg text-white">
+                        最適推薦方案
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400" id="scenIcon">
+                            <!-- SVG 動態替換 -->
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white" id="scenResultTitle">跨領域知識融合大腦</h3>
+                            <p class="text-xs text-indigo-400" id="scenResultCombo">組合：NotebookLM + Gemini 3 Pro</p>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-300" id="scenResultDesc">
+                        您可以直接將 YouTube 影片網址、多份 PDF 合約或會談錄音直接放入 NotebookLM 作為素材。然後利用 Gemini 的跨對話與記憶功能，一鍵打包生成包含特定知識與原子習慣框架的每日行動方案！
+                    </p>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-slate-400">專用推薦提示詞：</span>
+                            <button onclick="copyMatchmakerPrompt()" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                                複製提示詞
+                            </button>
+                        </div>
+                        <div class="bg-slate-900 rounded-lg p-3 text-xs text-slate-300 font-mono border border-slate-700/50 max-h-32 overflow-y-auto" id="matchmakerPrompt">
+                            請在我的 NotebookLM 中同時選定「原子習慣」與「納瓦爾寶典」筆記本，並扮演我的個人習慣管理顧問。結合納瓦爾的「槓桿規模化」方向與原子習慣的「環境設計法、兩分鐘法則」，幫我規劃一套可落實的日計畫。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模組二：5大核心提示詞與公式生成器 -->
+    <section id="promptBuilder" class="py-16 bg-slate-800/30 border-y border-slate-800 scroll-mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-white mb-2">💡 神奇 AI 提示詞與自動化公式生成器</h2>
+                <p class="text-slate-400">專為新手優化的公式，調用 2026 年最新 Veo 3 / Sora 2 影片、NotebookLM 角色扮演與 Claude Skills 2.0 markdown 指令。</p>
+            </div>
+
+            <!-- 標籤切換 -->
+            <div class="flex justify-center space-x-2 mb-8 bg-slate-900 p-1.5 rounded-xl max-w-md mx-auto">
+                <button onclick="switchPromptTab('veo')" id="btn-veo" class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow">
+                    🎬 Veo 3 / Sora 2 影片
+                </button>
+                <button onclick="switchPromptTab('notebook')" id="btn-notebook" class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    📔 NotebookLM 角色
+                </button>
+                <button onclick="switchPromptTab('skills')" id="btn-skills" class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    ⚡ Claude Skills 2.0
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                <!-- 欄位輸入區 (占 5 欄) -->
+                <div class="lg:col-span-5 bg-slate-800/80 rounded-2xl p-6 border border-slate-700 flex flex-col justify-between">
+                    
+                    <!-- Tab 1: Veo 3 影片提示詞公式 -->
+                    <div id="tab-veo" class="space-y-4">
+                        <h3 class="font-bold text-lg text-indigo-400 mb-2">🎬 Veo 3 & Sora 2 五步法影片公式</h3>
+                        <p class="text-xs text-slate-400">Google 官方指引的「運鏡+主體+動作+背景+風格」黃金公式，極大提升物理交互真實性！</p>
+                        
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">① 攝影/運鏡 (Camera Movement)</label>
+                            <select id="v_camera" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="跟拍鏡頭從後方追趕 (Chase camera from behind)">跟拍鏡頭從後方追趕 (Chase camera)</option>
+                                <option value="動態近距離面部特寫 (Close-up dynamic face shot)">動態近距離面部特寫 (Close-up)</option>
+                                <option value="無人機低空環繞拍攝 (Aerial drone orbit zoom)">無人機低空環繞拍攝 (Drone orbit)</option>
+                                <option value="慢動作極致推軌變焦 (Slow motion dolly zoom)">慢動作極致推軌變焦 (Dolly zoom)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">② 主體 (Subject)</label>
+                            <select id="v_subject" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="一個身穿日系極簡風橘色風衣的主角">身穿日系極簡橘色風衣的主角</option>
+                                <option value="一個戴著紅色探險斗篷、眼神堅毅的探險小女孩">戴紅色探險斗篷的探險女孩</option>
+                                <option value="一個踩著滑板、在街頭專注挑戰極限動作的小男孩">踩滑板挑戰極限的小男孩</option>
+                                <option value="一隻瞪大雙眼、神情充滿喜劇效果的英短藍貓">瞪大雙眼、表情驚訝的英短貓</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">③ 動作 (Action)</label>
+                            <select id="v_action" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="推開一扇神祕且發光的時空傳送門，強光瞬間傾瀉而出，照射在臉部上">推開神秘時空門，強光照射</option>
+                                <option value="大步快跨越過佈滿霓虹水窪的路面，皮鞋濺起晶瑩的水花">跨過霓虹水窪，皮鞋濺起水花</option>
+                                <option value="在半空中完成一個高難度滑板翻轉，滑板順利咬合並平穩精準落地">滑板空中翻轉，精準平穩落地</option>
+                                <option value="神情專注地手持精鋼雕刻刀，切開質地厚實、油脂多汁的烤牛肉">用鋼刀切割極厚多汁的烤牛肉</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">④ 背景 (Background)</label>
+                            <select id="v_bg" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="霓虹燈閃爍、下著微雨的深夜東京十字路口">下微雨、霓虹閃爍的深夜東京十字路口</option>
+                                <option value="白雪皚皚、霧氣瀰漫、古老巨木林立的神祕北歐原始森林">白雪皚皚、霧氣繚繞的神祕北歐森林</option>
+                                <option value="古色古香、散發懷舊像素風格與紅白機電視螢幕的復古遊戲廳">懷舊像素風紅白機電視的復古遊戲廳</option>
+                                <option value="賽博朋克風格、塞滿深藍色發光電纜與量子計算機的未來實驗室">賽博朋克風格、充滿藍色光線的實驗室</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">⑤ 風格/氛圍 (Style)</label>
+                            <select id="v_style" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="電影級 8K 畫質、寫實的光線追蹤、手部肌肉纖維與烤肉紋理細節清晰可辨">電影級 8K、極致光線追蹤、手部擬真</option>
+                                <option value="治癒系日式動漫風、柔和暖色調、畫面溫馨且充滿情緒感染力">治癒系日式動漫風、柔和暖色調</option>
+                                <option value="復古懷舊像素風格、紅白機顆粒質感、時代沉浸感強烈">復古懷舊像素風、紅白機電視顆粒質感</option>
+                                <option value="強烈 3D 動態視覺圖表、高對比飽和度、極佳前衛科幻宣傳感">前衛科幻 3D 圖表風格、高飽和色調</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: NotebookLM 角色指令 -->
+                    <div id="tab-notebook" class="space-y-4 hidden">
+                        <h3 class="font-bold text-lg text-amber-500 mb-2">📔 NotebookLM 筆記本專屬系統設定</h3>
+                        <p class="text-xs text-slate-400">95% 人都不知道，NotebookLM 右上角有「自定義筆記本」系統指令功能。在此客製化您的 AI 導師！</p>
+                        
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">扮演的核心角色</label>
+                            <input type="text" id="nb_role" value="個人自媒體品牌變現與商業顧問" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">所依據的主資料庫 (你的 Sources)</label>
+                            <input type="text" id="nb_source" value="《AI 個人品牌變現藍圖》電子書 + 讀者諮詢痛點 Excel 表" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">應用的指導理論 (原子習慣等)</label>
+                            <input type="text" id="nb_theory" value="納瓦爾槓桿哲學與原子習慣四個核心步驟（兩分鐘法則、習慣堆疊）" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">輸出的特定口氣與風格</label>
+                            <select id="nb_tone" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="溫暖有真人口吻、結構條理分明、避免長篇大論與敷衍废话">溫暖、有真人口吻、條理分明</option>
+                                <option value="極致精準、完全依賴 Sources 絕不允許任何科幻幻想或延伸幻覺">極致精準、嚴格依循來源不產生幻覺</option>
+                                <option value="日系極簡日式雜誌編輯感、多用條列式清單、最後附帶 CTA">日式極簡風格、條列清單、帶 CTA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Claude Skills 2.0 自動化 -->
+                    <div id="tab-skills" class="space-y-4 hidden">
+                        <h3 class="font-bold text-lg text-rose-400 mb-2">⚡ Claude Skills 2.0 自動化指令 Markdown</h3>
+                        <p class="text-xs text-slate-400">Skills 是存放在 Claude 的一整套自動化指令，只要你給一句話，它就會自動辨識並執行多步驟任務！</p>
+                        
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">自動化 Skill 名稱</label>
+                            <input type="text" id="sk_name" value="YouTube_Viral_Script_Workflow" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">觸發此 Skill 的場景條件 (Trigger)</label>
+                            <input type="text" id="sk_trigger" value="當用戶在對話中提及「啟動爆款腳本」或上傳全新影片選題時" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">步驟一 (第一支 Skills)</label>
+                            <input type="text" id="sk_step1" value="自動聯網搜尋 YouTube 與 TikTok 當月最爆 AI 變現與副業熱點話題" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">步驟二 (第二支 Skills)</label>
+                            <input type="text" id="sk_step2" value="選取最高分爆款，撰寫 12 分鐘具有人味、語速自然的影音逐字大綱" oninput="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">外接 MCP 工具串聯</label>
+                            <select id="sk_mcp" onchange="generateDynamicPrompt()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5">
+                                <option value="Notion 看板 MCP (自動同步寫好的腳本與封面標籤)">Notion 看板 MCP (自動同步進度)</option>
+                                <option value="Gamma AI 簡報 MCP (直接把大綱做成高顏值教學 PPT)">Gamma AI 簡報 MCP (直接轉簡報)</option>
+                                <option value="GitHub & Vercel MCP (一鍵自動化網頁打包部署上線)">GitHub & Vercel (一鍵網頁上線)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 生成結果展示 (占 7 欄) -->
+                <div class="lg:col-span-7 bg-slate-950 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
+                            <span class="text-sm font-semibold text-slate-400 flex items-center gap-2">
+                                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                                實時渲染的提示詞範本 (一鍵複製)
+                            </span>
+                            <span class="text-xs text-indigo-400" id="promptTypeLabel">VEO 3 影音專用格式</span>
+                        </div>
+
+                        <!-- 預覽框 -->
+                        <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 font-mono text-sm leading-relaxed text-slate-300 overflow-y-auto max-h-[380px] min-h-[250px]" id="promptOutputArea">
+                            % 運鏡指令 %<br>
+                            跟拍鏡頭從後方追趕 (Chase camera from behind)<br><br>
+                            % 主體和細節描述 %<br>
+                            一個身穿日系極簡風橘色風衣的主角...
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex gap-4">
+                        <button onclick="copyGeneratedPrompt()" class="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-all shadow-md flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                            複製並拿去調用
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模組三：2026 最新 AI 深度知識庫探索 -->
+    <section id="knowledgeBase" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-white mb-2">💡 2026 最新 AI 隱藏用法與實戰知識庫</h2>
+            <p class="text-slate-400">點擊查看 95% 的人都不知道的隱藏黑科技。結合 Claude Cowork、Gemini 3、Veo 3 等地表最強實戰。</p>
+            
+            <!-- 搜尋與篩選欄 -->
+            <div class="mt-6 max-w-md mx-auto flex gap-2">
+                <input type="text" id="kbSearchInput" oninput="filterKnowledgeCards()" placeholder="輸入關鍵字篩選知識庫 (如: Claude, Notion, 影片...)" class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <button onclick="clearSearch()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-medium transition-colors">清除</button>
+            </div>
+        </div>
+
+        <!-- 知識庫網格 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="kbGrid">
+            
+            <!-- Card 1 -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 hover:border-indigo-500/50 transition-all card-glow flex flex-col justify-between" data-category="google">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 rounded-lg">Google & NotebookLM</span>
+                        <span class="text-xs text-slate-500">難度: 🟢 易</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Gemini 3.0 多筆記本大融合術</h3>
+                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">以前 NotebookLM 只能單一研究，現在只要在 Gemini 左側欄調用 NotebookLM，即可同時選取多個不同領域的筆記本融合解答，一秒產生跨域計畫！</p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                    <button onclick="toggleCardDetail('detail-1')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">展開新手密技 (95%不知) ↓</button>
+                </div>
+                <!-- 隱藏詳細細節 -->
+                <div id="detail-1" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-xs text-slate-300 space-y-2 bg-slate-900/50 p-3 rounded-lg">
+                    <p>💡 <strong>密技：商業跨域公式</strong></p>
+                    <p>把《納瓦爾寶典》當大方向（教你特有知識與槓桿），把《原子習慣》當具體執行。在 Gemini 左下角加號載入這兩個筆記本，並給予自身背景，它會自動將抽象哲學與每日作息完美合體，自動化輸出每日精準日誌表！</p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 hover:border-indigo-500/50 transition-all card-glow flex flex-col justify-between" data-category="google">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 rounded-lg">Google & NotebookLM</span>
+                        <span class="text-xs text-slate-500">難度: 🟡 中</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Sources A級可靠性主動評分機制</h3>
+                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">為了避免 AI 產生幻覺，NotebookLM 只會依靠你的上傳來源解答。但如果來源本身充斥垃圾博客怎麼辦？可以命令它幫你評定可靠性打分數。</p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                    <button onclick="toggleCardDetail('detail-2')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">展開新手密技 (95%不知) ↓</button>
+                </div>
+                <div id="detail-2" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-xs text-slate-300 space-y-2 bg-slate-900/50 p-3 rounded-lg">
+                    <p>💡 <strong>密技：保證無幻覺乾淨資料庫</strong></p>
+                    <p>在導入一大堆 YouTube 影片與博客後，在對話欄下指令：<strong>「請幫我評估目前所有 Sources，優先檢視官方文件與权威科學報告。依據可靠度分為 A/B/C/D 級，並列出標題。」</strong> 接著，手動在左側欄刪除被評為 C、D 級的個人博文。這樣一來，你的 NotebookLM 就變成了百分之百純淨、高品質的私人專家！</p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 hover:border-indigo-500/50 transition-all card-glow flex flex-col justify-between" data-category="claude">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-amber-500/10 text-amber-400 rounded-lg">Claude Cowork</span>
+                        <span class="text-xs text-slate-500">難度: 🔴 難</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Claude Skills 2.0 自動化大串聯</h3>
+                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">不要再每次開對話重新複製提示詞了！利用 Skills 2.0 markdown 把選題、大綱與寫腳本這 3 個技能徹底打包在一起，一觸即發！</p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                    <button onclick="toggleCardDetail('detail-3')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">展開新手密技 (95%不知) ↓</button>
+                </div>
+                <div id="detail-3" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-xs text-slate-300 space-y-2 bg-slate-900/50 p-3 rounded-lg">
+                    <p>💡 <strong>密技：自製 YouTube 爆款一條龍插件</strong></p>
+                    <p>建立三個分別名為「選題器」、「大綱生成器」、「人味腳本大師」的 Markdown 檔案。接著呼喚 Claude：「<strong>請幫我將這 3 個流程，按照先後順序打包成一個名為 'YouTube_Auto_Viral' 的 Skill 壓縮包。</strong>」 下載並在自定義設定中上傳，以後只要發送你的選題，Claude 就會默默把 15 分鐘逐字搞跟封面圖標，全部自動輸出完畢！</p>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 hover:border-indigo-500/50 transition-all card-glow flex flex-col justify-between" data-category="claude">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-amber-500/10 text-amber-400 rounded-lg">Claude Cowork</span>
+                        <span class="text-xs text-slate-500">難度: 🟡 中</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Notion MCP 看板全自動數據同步</h3>
+                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">手動複製貼上客戶資料最痛苦？Claude Cowork 透過 Model Context Protocol (MCP) 連接外部 Notion，自動將郵箱報表爬取歸檔，一格都不會漏！</p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                    <button onclick="toggleCardDetail('detail-4')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">展開新手密技 (95%不知) ↓</button>
+                </div>
+                <div id="detail-4" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-xs text-slate-300 space-y-2 bg-slate-900/50 p-3 rounded-lg">
+                    <p>💡 <strong>密技：零代碼搭建客戶追蹤看板</strong></p>
+                    <p>在 Notion 中建立「諮詢看板」空白表格。打開 Claude 桌面版的 MCP 設定貼上連結授權。接著，對 Claude 說：「<strong>請幫我讀取本週 Gmail 所有諮詢信件，提取客戶姓名、痛點、聯絡方式、預約時間，並使用 Notion 接口自動填入看板，完畢後告訴我。</strong>」 你在對話框看著進度條一條一條被劃掉，雙手甚至完全不用動，資料就排得乾乾淨淨了！</p>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 hover:border-indigo-500/50 transition-all card-glow flex flex-col justify-between" data-category="design">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-rose-500/10 text-rose-400 rounded-lg">Imagen 3 & Veo 3</span>
+                        <span class="text-xs text-slate-500">難度: 🟢 易</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Imagen 3 (Nano Banana Pro) 完美中文卡片</h3>
+                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">以前 AI 畫圖中文常常是亂碼，最新的 Nano Banana Pro 成功解決此問題！不管是小紅書文青風格，還是含注音/拼音的生字卡、科普原理解析圖，一鍵完美出圖。</p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                    <button onclick="toggleCardDetail('detail-5')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">展開新手密技 (95%不知) ↓</button>
+                </div>
+                <div id="detail-5" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-xs text-slate-300 space-y-2 bg-slate-900/50 p-3 rounded-lg">
+                    <p>💡 <strong>密技：記憶宮殿英文學習卡</strong></p>
+                    <p>給予 Imagen 3 提示詞：<strong>「幫我生成一個日式手繪風格的廚房，在廚房中所有主要物件（冰箱、微波爐、烤箱等）下方，都要標註精美的十字圓形小標籤。標籤第一行寫拼音，第二行寫繁體中文。」</strong> 出圖精緻度與排版百分之百正確，非常適合拿來直接印製成兒童科普圖卡或做小紅書博文賺取流量！</p>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 hover:border-indigo-500/50 transition-all card-glow flex flex-col justify-between" data-category="design">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-rose-500/10 text-rose-400 rounded-lg">Imagen 3 & Veo 3</span>
+                        <span class="text-xs text-slate-500">難度: 🟡 中</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Veo 3 故事短片角色與場景統一法</h3>
+                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">做動畫短片最怕「人物一會穿紅衣、一會穿藍衣」。透過 Gemini 預先規劃場景描述與細節鎖定，分鏡生成後用 Filmora 拼裝，新手無腦起飛！</p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                    <button onclick="toggleCardDetail('detail-6')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">展開新手密技 (95%不知) ↓</button>
+                </div>
+                <div id="detail-6" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-xs text-slate-300 space-y-2 bg-slate-900/50 p-3 rounded-lg">
+                    <p>💡 <strong>密技：1分鐘動畫量產密技</strong></p>
+                    <p>讓 Gemini 依據同一個主角（例如：<strong>5歲、一頭金色捲髮、身穿紅色探險斗篷的小男孩，面帶好奇神色</strong>）生成 5 個連續故事鏡頭。拿到每個鏡頭提示詞後，複製放入 Veo 3 一個一個生成。再利用剪輯軟體 Filmora 中內置的「AI音樂、AI字幕、電影級幻燈過渡」拼成 1 分鐘故事影片，月入幾千美金不是夢！</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 模組四：AI 知識挑戰賽 (Quiz) -->
+    <section id="aiQuiz" class="py-16 bg-slate-800/20 border-t border-slate-800 scroll-mt-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="text-xs font-semibold bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20">🧠 實戰能力檢測</span>
+                <h2 class="text-3xl font-bold tracking-tight text-white mt-3 mb-2">NotebookLM 風格新手知識挑戰賽</h2>
+                <p class="text-slate-400">新手怕產生幻覺？做這 3 道精選選擇題，即刻解鎖對 2026 最強 AI 自動化架構的深層理解！</p>
+            </div>
+
+            <!-- Quiz 容器 -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <!-- 進度條 -->
+                <div class="w-full bg-slate-900 h-2 rounded-full mb-6">
+                    <div id="quizProgress" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 33.3%"></div>
+                </div>
+
+                <!-- 題目內容 -->
+                <div id="quizContent" class="space-y-6">
+                    <!-- 動態由 JS 渲染 -->
+                </div>
+
+                <!-- 控制鈕 -->
+                <div class="mt-8 flex justify-between items-center">
+                    <span class="text-sm text-slate-400" id="quizStepText">題目 1 / 3</span>
+                    <button id="nextQuizBtn" onclick="nextQuestion()" disabled class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors">
+                        下一題
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模組五：常見問題 FAQ -->
+    <section id="faq" class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-white mb-2">🙋 新手雷區與名詞釐清 FAQ</h2>
+            <p class="text-slate-400">解答 2026 年新手最容易搞錯的 AI 核心概念，杜絕混亂！</p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- FAQ 1 -->
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl overflow-hidden transition-all duration-300">
+                <button onclick="toggleFaq(1)" class="w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none hover:bg-slate-800 transition-colors">
+                    <span class="font-bold text-white text-base">Q1: 什麼是 Model Context Protocol (MCP)？新手需要學程式嗎？</span>
+                    <svg id="faqIcon-1" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="faqAnswer-1" class="hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-700/50 pt-4 bg-slate-900/30">
+                    <strong>完全不需要程式背景！</strong>MCP（模型上下文協議）是 Anthropic 推出的標準。它就像是一個「萬能橋樑」。以往 Claude 只是網頁瀏覽器，不能直接讀取你的電腦硬碟，或你日常登入的 Notion 軟體。而最新 Claude 桌面版 Cowork 只需一鍵「確認授權」，就能依據 MCP 規定的格式去安全讀寫你指定的本地資料夾與 Notion API 數據。
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl overflow-hidden transition-all duration-300">
+                <button onclick="toggleFaq(2)" class="w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none hover:bg-slate-800 transition-colors">
+                    <span class="font-bold text-white text-base">Q2: Claude Project (專案) 跟我建立的 Skills 到底差在哪？</span>
+                    <svg id="faqIcon-2" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="faqAnswer-2" class="hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-700/50 pt-4 bg-slate-900/30">
+                    這是一個非常經典的新手痛點！
+                    <br><br>
+                    • <strong>Project (專案)</strong>：就像是一個「靜態背景規則包」。你上傳了你的品牌資料與大方向，Claude 會記住。但你每一次需要寫文案，還是得手動一步一步去詢問對話。
+                    <br><br>
+                    • <strong>Skills (技能)</strong>：就像是一部「動態的流程跑車」。平時完全不佔用任何 context 記憶體空間。只有當你在聊天中發送關鍵字觸發（例如輸入：多平台分發）時，它才會自動跳出來，把「選題、大綱、寫逐字、轉 Notion」一整套流程自動一次性跑完。
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl overflow-hidden transition-all duration-300">
+                <button onclick="toggleFaq(3)" class="w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none hover:bg-slate-800 transition-colors">
+                    <span class="font-bold text-white text-base">Q3: 我聽說 Claude Code 感覺很強，我該從這個還是從 Cowork 著手？</span>
+                    <svg id="faqIcon-3" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="faqAnswer-3" class="hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-700/50 pt-4 bg-slate-900/30">
+                    <strong>強烈建議新手與非技術人員，直接從 Claude Cowork 開始！</strong>
+                    <br><br>
+                    Claude Code 本質上是運行在黑色終端命令行介面（CLI）的開發環境，主要是為了工程師和程序開發者準備的。而 <strong>Claude Cowork 則是大眾版的桌面圖形介面應用</strong>，同樣具備 local 本地數據讀寫、自動生成完整網站的強大底層模型（3.5 Sonnet / 4.7 系列），但操作方式就像在聊 Line 或 Telegram 一樣直觀，無痛上手。
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl overflow-hidden transition-all duration-300">
+                <button onclick="toggleFaq(4)" class="w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none hover:bg-slate-800 transition-colors">
+                    <span class="font-bold text-white text-base">Q4: Veo 3 與 Sora 2 的影片生成，到底哪一個更好？新手該如何選擇？</span>
+                    <svg id="faqIcon-4" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div id="faqAnswer-4" class="hidden px-6 pb-5 text-sm text-slate-300 leading-relaxed border-t border-slate-700/50 pt-4 bg-slate-900/30">
+                    根據我們進行的 5 組相同提示詞正對面並排 PK 測試：
+                    <br><br>
+                    • <strong>Google Veo 3.1</strong>：在細節把控、物理慣性處理、手部逼真程度（例如用鋼刀切烤牛肉纖維）以及情感表達（瞪大雙眼喜劇英短貓）方面以 3:2 的比分獲勝，畫面真實感與細節首選。
+                    <br><br>
+                    • <strong>Sora 2</strong>：在「大範圍複雜人體動作（如滑板高難度旋轉失敗落地）」的動態流暢度、光線反射、以及帶有中文字幕配音與影片持續長度方面更佔據優勢。
+                    <br><br>
+                    一般情況下推薦新手優先在 Google Gemini Advanced 中試用 Veo 3。
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 自訂彈出提示元件 (Toast) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-10 opacity-0 transition-all duration-300 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span id="toastMsg" class="text-sm font-medium">提示詞複製成功！</span>
+    </div>
+
+    <!-- 底部資訊 -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-12 text-slate-500 text-center text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <p>地表最強 AI 知識大腦導航器 © 2026 孔老師 AI 研習社. All Rights Reserved.</p>
+            <p class="text-xs text-slate-600">本系統所指引的所有技術、流程、公式，皆完全提煉自 NotebookLM 内部資料夾、Claude Cowork 以及 Nano Banana 實戰指南。</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript 交互邏輯 -->
+    <script>
+        // 初始化狀態
+        let currentTab = 'veo';
+        let currentQuizIndex = 0;
+        let userScore = 0;
+        let selectedQuizOption = null;
+
+        // 任務適配診斷器資料庫
+        const scenarioData = {
+            scen1: {
+                title: "資訊降噪與跨領域知識大腦",
+                combo: "組合：NotebookLM + Gemini 3 Pro (Imagen 3)",
+                desc: "您可以將各種會議音檔、合約文檔、YouTube 影片直接放入 NotebookLM。這時它完全不產生幻覺。再到新版 Gemini 選中多個筆記本（如原子習慣 + 納瓦爾），即可讓 AI 自主打通兩者邏輯，一鍵產生可落地執行的全套「AI 個人品牌變現大綱與進度表」！",
+                prompt: "你是一位精通《納瓦爾寶典》（規模化、特有知識與槓桿）以及《原子習慣》（兩分鐘法則、習慣堆疊）的商業顧問。請閱讀我 NotebookLM 所上傳的個人背景與諮詢文檔，為我量身定制一套能有效利用 AI 自動化技術，在 3 個月內啟動個人品牌的具體實戰週計畫。",
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`
+            },
+            scen2: {
+                title: "本地檔案與工具全自動化團隊",
+                combo: "組合：Claude Cowork + Notion MCP",
+                desc: "無需學習任何程式碼，使用面向普通人設計的大眾版 Claude Cowork 桌面應用。指定本機的紊亂桌面，它會自主掃描、建文件夾、智能分析重命名。透過 Model Context Protocol 連接外部 Notion，自動將新進郵件的客戶痛點一格一格填入表格！",
+                prompt: "請幫我開啟本機上的 'Client_Inbox' 資料夾，掃描所有預約諮詢文檔。提取每位客戶的姓名、痛點等級與具體需求，並調用 Notion MCP 連接器，將這些結構化數據完整自動同步填入我的『讀者痛點分析看板』表格中，一格都不要漏掉。",
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>`
+            },
+            scen3: {
+                title: "零基礎高質感 Landing Page 部署",
+                combo: "組合：Claude Design + Vercel / GitHub",
+                desc: "透過 3.5 Sonnet / 4.7 視覺引擎。你打一句話跟它聊天，它就在幾分鐘內直接做出一個完全可上線、帶 3D 地球仪或粒子特效的 Landing Page。你可以點擊右上角匯出，透過 Claude 自動將網頁代碼一鍵上傳 GitHub 並在 Vercel 發布到全網！",
+                prompt: "請使用 Claude Design 建構一個完全響應式、日系極簡美學、橘色配米白（國外前衛科技公司風格）的 AI 自動化課程 Landing Page。版面留白要足，包含課程大綱、學員案例見證與醒目的立即預約 CTA 按鈕，並輸出完整可部署代碼。",
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>`
+            },
+            scen4: {
+                title: "4K 一致性 IP 動畫與視覺包裝",
+                combo: "組合：Google Veo 3 / Sora 2 + Filmora 剪輯",
+                desc: "Veo 3 影片與 Sora 2 讓影片生成門檻降至為零。利用 Gemini 3 先寫好具有高度細節描寫（鎖定衣服與髮型）的分鏡提示詞，一個個交給 Veo 3 產生。再導入 Filmora 套用 AI 字幕、一鍵生成 AI 音樂與幻燈過渡，一條龍無腦產出百萬點閱爆款短片！",
+                prompt: "【鏡頭1】：跟拍鏡頭從後方追趕，5歲、金色捲髮、身穿紅色探險斗篷的小男孩。大步跨過佈滿霓虹閃爍積水路面，濺起晶瑩的水花。背景為深夜雨後的東京街頭。電影級寫實光影追蹤特寫，完美手部肌肉物理交互。",
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>`
+            },
+            scen5: {
+                title: "24小時雲端 Agent 個人分身",
+                combo: "組合：OpenClaw (Open Trail) / Skyworker",
+                desc: "安裝小龍蝦對小白很難，但我們可以直接使用 Skyworker 雲端版。它把最頂尖的滿血版 GPT-5.5、Claude 4.7 與 Gemini 3.1 Pro 包在一起，並能自動在雲端自主運行、聯網全網監控。只要在 Telegram 發送一句話，它就在後台替你 24h 不休眠跑完複雜研究！",
+                prompt: "請啟動 OpenClaw 的雲端研究 Agent 任務，全網檢索 2026 最新美股盤前分析，特別針對 AI 新星企業以及 YouTube 熱門影片選題做一份結構化 PDF 研究簡報。確保每項數據都附帶真實的可點擊引用來源。完成後將 PDF 自動推送到我的 Telegram 聊天框。",
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`
+            }
+        };
+
+        // 知識問答挑戰賽資料
+        const quizQuestions = [
+            {
+                question: "1. 關於新版 Gemini 3 與 NotebookLM 結合的「地表最強大腦更新」，哪一項是以前「單一 NotebookLM」做不到的最強特點？",
+                options: [
+                    "A. 一次選取並加載多個不同主題的 NotebookLM 筆記本（例如：將《原子習慣》與《納瓦爾》合在一起調用），由 Gemini 來進行跨對話、跨領域的知識融合與決策生成。",
+                    "B. NotebookLM 能夠把筆記本分享給全班 50 名學生一起同步在線編輯代碼。",
+                    "C. 能夠無腦將 PDF 導出到本地桌面並自动重命名。"
+                ],
+                answer: 0,
+                explanation: "💡 沒錯！以往在 NotebookLM 中，不論資料多寡，你都只能「一次針對一個筆記本」提問。而與 Gemini 結合後，你可以「同時調用多個筆記本」作為資料來源，把不同領域的特有知識（如納瓦爾的商業哲學、原子習慣的執行策略）無縫融合，由 Gemini 生成最棒的決策方案！"
+            },
+            {
+                question: "2. 新手雷區：在 Claude 全生態中，95% 人容易搞混：Project (專案) 跟我設定的 Skills 2.0 (技能) 核心差異是什麼？",
+                options: [
+                    "A. Project 是本地執行的命令行工具，Skills 則是雲端運行的 React 前端網頁。",
+                    "B. Project 是一個靜態背景規則與知識庫，每次使用還是要手動一步步詢問；而 Skills 則是存放在帳號裡、已打包的『流程跑車』，只要一句話觸發，AI 就會自動在背景跑完所有重複多步驟任務，節省大量 Context 空間。",
+                    "C. Project 需要手動付費訂閱，Skills 則是 Google 完全免費提供的生圖大腦。"
+                ],
+                answer: 1,
+                explanation: "💡 完全正確！Project 用於存儲固定背景資料，但你還是得每次給指令。Skills 2.0 則是完全自動化的觸發腳本。它能把選題、寫大綱、產腳本、外接 Notion 看板同步，甚至連接 Gamma 的整套多步驟流程打包。需要時一鍵自動觸發，大幅解放你的精力！"
+            },
+            {
+                question: "3. 在使用最新 Google Veo 3 或 Sora 2 製作 1 分鐘故事動畫短片時，為了解決 AI 生成「人物角色不一致（一會穿紅衣一會穿藍衣）」的硬傷，孔老師推薦的新手無腦心法是什麼？",
+                options: [
+                    "A. 在對話中使用 Gemini 3.0 先行策劃好包含主角極其詳細細節描寫（如髮型、衣服顏色、眼神、表情、動作等）的場景描述，按分鏡一個一個放入 Veo 3 渲染，再用 Filmora 剪輯拼裝。",
+                    "B. 只生成黑白影片或只拍動物主角，不給 AI 任何描述詞，讓 AI 自由發揮最快。",
+                    "C. 每次影片生成後，手動在 Photoshop 中用畫筆把衣服塗成相同的顏色。"
+                ],
+                answer: 0,
+                explanation: "💡 太厲害了，全對！維持角色一致性的最有效方式是「利用超高度詳細描述鎖定角色錨點」。在 Gemini 中生成故事劇本，詳細要求每個分鏡中男孩的衣服與表情，再到 Veo 3 逐一生成 8 秒片段，最後導入 Filmora 自動加 AI 字幕、音樂與膠片濾鏡拼裝！"
+            }
+        ];
+
+        // 頁面加載完成後
+        window.onload = function() {
+            // 初始化適配診斷
+            runDiagnosis();
+            // 初始化動態提示詞
+            generateDynamicPrompt();
+            // 初始化 Quiz
+            loadQuiz();
+        }
+
+        // 任務適配診斷器邏輯
+        function runDiagnosis() {
+            const scenario = document.getElementById("userScenario").value;
+            const data = scenarioData[scenario];
+
+            // 替換圖示與文字
+            document.getElementById("scenIcon").innerHTML = data.icon;
+            document.getElementById("scenResultTitle").innerText = data.title;
+            document.getElementById("scenResultCombo").innerText = data.combo;
+            document.getElementById("scenResultDesc").innerText = data.desc;
+            document.getElementById("matchmakerPrompt").innerText = data.prompt;
+
+            // 更改引導文字
+            const stepGuide = document.getElementById("stepGuide");
+            if (scenario === 'scen1') {
+                stepGuide.innerHTML = "💡 <strong>降噪祕法</strong>：在導入 YouTube 或會議音檔後，請 NotebookLM 剔除冗言贅詞，只保留 A 級可靠度大綱，資料乾淨後一鍵跟 Gemini 對話最有效！";
+            } else if (scenario === 'scen2') {
+                stepGuide.innerHTML = "💡 <strong>Cowork 密技</strong>：本地檔案混亂不用怕！只需指定 Claude Cowork 工作目錄，配合 <code>CLOUDM.md</code> 寫入指令規則，它就會完全遵循『大腦 PARA 整理法』為你分類歸檔！";
+            } else if (scenario === 'scen3') {
+                stepGuide.innerHTML = "💡 <strong>Design 祕技</strong>：Landing page 生成後如果不滿意某區塊，選中該部分對 Claude 說『把這裡改為日系極簡淺綠色』，代碼即刻改好，部署至 Vercel 全網可打開！";
+            } else if (scenario === 'scen4') {
+                stepGuide.innerHTML = "💡 <strong>Veo 3 祕技</strong>：Veo 3 支援高質感的光影追蹤。如果想要生成完美的食物、水滴交互，提示詞務必寫入『微距質感、真實手部肌肉慣性物理交互』。";
+            } else if (scenario === 'scen5') {
+                stepGuide.innerHTML = "💡 <strong>OpenClaw 祕技</strong>：OpenClaw 可以像 24小時不下班的雲端助理，它串接了滿血版的影像與推理大師模型，能定時自動運行並將美股盤前、競爭對手數據發送到你的 Telegram 框。";
+            }
+        }
+
+        // 複製任務診斷提示詞
+        function copyMatchmakerPrompt() {
+            const promptText = document.getElementById("matchmakerPrompt").innerText;
+            copyToClipboard(promptText, "📌 推薦提示詞複製成功！");
+        }
+
+        // 提示詞公式 tab 切換
+        function switchPromptTab(tab) {
+            currentTab = tab;
+            
+            // 隱藏所有 tab 內容
+            document.getElementById("tab-veo").classList.add("hidden");
+            document.getElementById("tab-notebook").classList.add("hidden");
+            document.getElementById("tab-skills").classList.add("hidden");
+
+            // 移除所有按鈕激活狀態
+            const tabs = ['veo', 'notebook', 'skills'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                btn.className = "flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white";
+            });
+
+            // 顯示當前 tab 並激活按鈕
+            document.getElementById(`tab-${tab}`).classList.remove("hidden");
+            const activeBtn = document.getElementById(`btn-${tab}`);
+            if (tab === 'veo') {
+                activeBtn.className = "flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow";
+                document.getElementById("promptTypeLabel").innerText = "🎬 VEO 3 / SORA 2 影音生成格式";
+            } else if (tab === 'notebook') {
+                activeBtn.className = "flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all bg-amber-500 text-white shadow";
+                document.getElementById("promptTypeLabel").innerText = "📔 NotebookLM 筆記本專用系統指令";
+            } else if (tab === 'skills') {
+                activeBtn.className = "flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all bg-rose-500 text-white shadow";
+                document.getElementById("promptTypeLabel").innerText = "⚡ Claude Skills 2.0 markdown 自動化";
+            }
+
+            generateDynamicPrompt();
+        }
+
+        // 實時動態提示詞生成邏輯
+        function generateDynamicPrompt() {
+            const outputArea = document.getElementById("promptOutputArea");
+
+            if (currentTab === 'veo') {
+                const camera = document.getElementById("v_camera").value;
+                const subject = document.getElementById("v_subject").value;
+                const action = document.getElementById("v_action").value;
+                const bg = document.getElementById("v_bg").value;
+                const style = document.getElementById("v_style").value;
+
+                outputArea.innerHTML = `【運鏡指令】：${camera}<br>
+【核心主體】：${subject}<br>
+【執行動作】：${action}<br>
+【背景與環境】：${bg}<br>
+【影片風格】：${style}<br><br>
+<span class="text-indigo-400 font-bold"># Veo 3 / Sora 2 最佳英文對照：</span><br>
+${camera.split(' (')[1] ? camera.split(' (')[1].replace(')', '') : 'Chase camera'}, focusing on a character, ${action.includes('推開') ? 'pushing open a mysterious glowing portal with realistic light interaction' : 'walking through neon puddles splashing water'}, set in ${bg.includes('東京') ? 'rainy Tokyo night street' : 'snowy Nordic forest'}, ${style.includes('8K') ? 'cinematic 8K macro render, hyper-realistic physics' : 'warm cozy anime style'}.`;
+            } 
+            
+            else if (currentTab === 'notebook') {
+                const role = document.getElementById("nb_role").value;
+                const source = document.getElementById("nb_source").value;
+                const theory = document.getElementById("nb_theory").value;
+                const tone = document.getElementById("nb_tone").value;
+
+                outputArea.innerHTML = `【Role - 角色設定】：你將在此筆記本中扮演一位專業的「${role}」。你的大腦已被完全設定在此特定的角色高度。<br><br>
+【Context - 絕對依託來源】：你的所有回答和分析，僅能百分之百依據上傳的「${source}」。嚴禁產生任何不受控的科幻幻覺，遇到不知道的部分請直接說：『抱歉，在我的 Sources 資料庫中沒有提及此點』。<br><br>
+【Target - 應用的執行理論框架】：請深入結合「${theory}」兩套理論，為我分析解答所有的讀者諮詢痛點。<br><br>
+【Style - 輸出氣氛語調】：${tone}。回答在條理分明、層次躍然的同時，避免敷衍與廢話。`;
+            } 
+            
+            else if (currentTab === 'skills') {
+                const skName = document.getElementById("sk_name").value;
+                const skTrigger = document.getElementById("sk_trigger").value;
+                const skStep1 = document.getElementById("sk_step1").value;
+                const skStep2 = document.getElementById("sk_step2").value;
+                const skMcp = document.getElementById("sk_mcp").value;
+
+                outputArea.innerHTML = `# skill: ${skName}<br>
+# description: "自動化影音爆款製作一條龍管線"<br><br>
+## trigger_conditions:<br>
+  - ${skTrigger}<br><br>
+## Execution_Steps:<br>
+  1. **步驟一**：${skStep1}<br>
+  2. **步驟二**：${skStep2}<br>
+  3. **步驟三**：撰寫並優化 12 分鐘富有真人口吻、高完存率的影音逐字稿腳本。<br><br>
+## MCP_Integrations:<br>
+  - 當所有腳本大綱確認後，自動調用「${skMcp}」同步執行輸出。<br><br>
+## fallback_rules:<br>
+  - 若 MCP 暫時無響應，應將腳本自動打包輸出至本機桌面 output/ 資料夾下之 markdown 格式存檔。`;
+            }
+        }
+
+        // 複製動態提示詞
+        function copyGeneratedPrompt() {
+            // 清理 HTML tag
+            const rawText = document.getElementById("promptOutputArea").innerText;
+            copyToClipboard(rawText, "✨ 生成提示詞已成功複製到剪貼簿！");
+        }
+
+        // 複製底層邏輯
+        function copyToClipboard(text, successMsg) {
+            // 安全剪貼簿機制
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(successMsg);
+                }).catch(err => {
+                    fallbackCopy(text, successMsg);
+                });
+            } else {
+                fallbackCopy(text, successMsg);
+            }
+        }
+
+        function fallbackCopy(text, successMsg) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg);
+            } catch (err) {
+                showToast("❌ 複製失敗，請手動複製！");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Toast 訊息提示
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            const toastMsg = document.getElementById("toastMsg");
+            toastMsg.innerText = msg;
+            
+            toast.classList.remove("translate-y-10", "opacity-0");
+            toast.classList.add("translate-y-0", "opacity-100");
+
+            setTimeout(() => {
+                toast.classList.remove("translate-y-0", "opacity-100");
+                toast.classList.add("translate-y-10", "opacity-0");
+            }, 3000);
+        }
+
+        // 知識庫探索卡片展開/收起
+        function toggleCardDetail(detailId) {
+            const detail = document.getElementById(detailId);
+            const button = detail.previousElementSibling.firstElementChild;
+            
+            if (detail.classList.contains("hidden")) {
+                detail.classList.remove("hidden");
+                button.innerText = "收起新手密技 ↑";
+            } else {
+                detail.classList.add("hidden");
+                button.innerText = "展開新手密技 (95%不知) ↓";
+            }
+        }
+
+        // 知識庫關鍵字動態搜尋過濾
+        function filterKnowledgeCards() {
+            const searchVal = document.getElementById("kbSearchInput").value.toLowerCase();
+            const grid = document.getElementById("kbGrid");
+            const cards = grid.children;
+
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const text = card.innerText.toLowerCase();
+                if (text.includes(searchVal)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById("kbSearchInput").value = "";
+            filterKnowledgeCards();
+        }
+
+        // 亮暗色模式切換
+        function toggleTheme() {
+            const body = document.getElementById("appBody");
+            const sunIcon = document.getElementById("sunIcon");
+            const moonIcon = document.getElementById("moonIcon");
+
+            if (body.classList.contains("bg-slate-900")) {
+                // 切換為亮色模式
+                body.classList.remove("bg-slate-900", "text-slate-100");
+                body.classList.add("bg-slate-50", "text-slate-800", "light");
+                sunIcon.classList.add("hidden");
+                moonIcon.classList.remove("hidden");
+            } else {
+                // 切換為暗色模式
+                body.classList.remove("bg-slate-50", "text-slate-800", "light");
+                body.classList.add("bg-slate-900", "text-slate-100");
+                sunIcon.classList.remove("hidden");
+                moonIcon.classList.add("hidden");
+            }
+        }
+
+        // Quiz 知識賽邏輯
+        function loadQuiz() {
+            selectedQuizOption = null;
+            document.getElementById("nextQuizBtn").disabled = true;
+
+            const q = quizQuestions[currentQuizIndex];
+            const progress = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById("quizProgress").style.width = `${progress}%`;
+            document.getElementById("quizStepText").innerText = `題目 ${currentQuizIndex + 1} / ${quizQuestions.length}`;
+
+            if (currentQuizIndex === quizQuestions.length - 1) {
+                document.getElementById("nextQuizBtn").innerText = "查看總結成果";
+            } else {
+                document.getElementById("nextQuizBtn").innerText = "下一題";
+            }
+
+            let optionsHtml = '';
+            q.options.forEach((opt, idx) => {
+                optionsHtml += `
+                    <button onclick="selectQuizOption(${idx})" id="opt-${idx}" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-700/40 hover:border-indigo-500/50 transition-all focus:outline-none text-sm leading-relaxed text-slate-300">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            document.getElementById("quizContent").innerHTML = `
+                <div class="space-y-4">
+                    <span class="text-xs font-bold text-indigo-400">Question ${currentQuizIndex + 1}</span>
+                    <h3 class="text-lg font-bold text-white">${q.question}</h3>
+                    <div class="space-y-3 mt-4">
+                        ${optionsHtml}
+                    </div>
+                    <div id="quizFeedback" class="hidden p-4 rounded-xl text-sm leading-relaxed mt-4">
+                        <!-- 回饋與原理解析 -->
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectQuizOption(idx) {
+            if (selectedQuizOption !== null) return; // 只能選一次
+            selectedQuizOption = idx;
+
+            const q = quizQuestions[currentQuizIndex];
+            const feedback = document.getElementById("quizFeedback");
+            const selectedBtn = document.getElementById(`opt-${idx}`);
+            const correctBtn = document.getElementById(`opt-${q.answer}`);
+
+            document.getElementById("nextQuizBtn").disabled = false;
+
+            if (idx === q.answer) {
+                userScore++;
+                selectedBtn.classList.add("border-emerald-500", "bg-emerald-950/20", "text-emerald-400");
+                feedback.className = "p-4 rounded-xl text-sm leading-relaxed mt-4 bg-emerald-950/30 text-emerald-400 border border-emerald-500/20";
+                feedback.innerHTML = `<strong>🎉 答對了！</strong><br>${q.explanation}`;
+            } else {
+                selectedBtn.classList.add("border-rose-500", "bg-rose-950/20", "text-rose-400");
+                correctBtn.classList.add("border-emerald-500", "bg-emerald-950/10", "text-emerald-400");
+                feedback.className = "p-4 rounded-xl text-sm leading-relaxed mt-4 bg-rose-950/30 text-rose-400 border border-rose-500/20";
+                feedback.innerHTML = `<strong>❌ 答錯了，正確答案為 A！</strong><br>${q.explanation}`;
+            }
+            feedback.classList.remove("hidden");
+        }
+
+        function nextQuestion() {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                loadQuiz();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById("quizProgress").style.width = `100%`;
+            document.getElementById("quizStepText").innerText = `實力挑戰完成！`;
+            document.getElementById("nextQuizBtn").style.display = "none";
+
+            let resultTitle = "";
+            let resultColor = "";
+            if (userScore === 3) {
+                resultTitle = "🏆 地表最強 AI 自動化大師";
+                resultColor = "text-amber-400";
+            } else if (userScore === 2) {
+                resultTitle = "🥈 精英 AI 實踐家";
+                resultColor = "text-indigo-400";
+            } else {
+                resultTitle = "🥉 萌新 AI 探索者";
+                resultColor = "text-slate-400";
+            }
+
+            document.getElementById("quizContent").innerHTML = `
+                <div class="text-center py-8 space-y-4">
+                    <span class="text-6xl">🎓</span>
+                    <h3 class="text-2xl font-black ${resultColor}">${resultTitle}</h3>
+                    <p class="text-slate-300">你答對了 ${userScore} / 3 道題！你的理解深度已擊敗身邊 95% 仍在用老一套 AI 玩法的人。</p>
+                    <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-700 max-w-lg mx-auto text-xs text-left text-slate-400 space-y-2">
+                        <p class="font-bold text-slate-300">📝 孔老師最終結語：</p>
+                        <p>AI 不會決定你能不能賺到錢，但你的「個人品牌特有知識槓桿」與「原子習慣支點」會決定。AI 僅是一個效率加倍的終極工具，現在就用生成出來的提示詞，前往 NotebookLM 或 Claude 自動化你的整套流程吧！</p>
+                    </div>
+                    <button onclick="resetQuiz()" class="mt-6 px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition-all">
+                        再挑戰一次
+                    </button>
+                </div>
+            `;
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            userScore = 0;
+            document.getElementById("nextQuizBtn").style.display = "";
+            loadQuiz();
+        }
+
+        // 常見問題 FAQ 折疊面板邏輯
+        function toggleFaq(id) {
+            const answer = document.getElementById(`faqAnswer-${id}`);
+            const icon = document.getElementById(`faqIcon-${id}`);
+
+            if (answer.classList.contains("hidden")) {
+                answer.classList.remove("hidden");
+                icon.classList.add("rotate-180");
+            } else {
+                answer.classList.add("hidden");
+                icon.classList.remove("rotate-180");
+            }
+        }
+    </script>
+</body>
+</html>
